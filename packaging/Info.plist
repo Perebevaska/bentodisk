@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0"><dict>
+<key>CFBundleExecutable</key><string>ModelDownloader</string>
+<key>CFBundleIdentifier</key><string>local.mac.modeldownloader</string>
+<key>CFBundleName</key><string>Загрузчик моделей</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleVersion</key><string>1</string>
+<key>CFBundleDevelopmentRegion</key><string>ru</string>
+<key>NSHighResolutionCapable</key><true/>
+</dict></plist>
