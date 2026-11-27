@@ -35,5 +35,6 @@ done
     /usr/bin/python3 -c 'import json, sys; rows = json.load(sys.stdin); assert isinstance(rows, list) and rows'
 hdiutil detach "$mount"
 mounted=false
-mkdir -p dist
-mv "$image" dist/BentoDisk-macOS.dmg
+output=${BENTODISK_DMG_OUTPUT:-dist/BentoDisk-macOS.dmg}
+mkdir -p "$(dirname "$output")"
+mv "$image" "$output"

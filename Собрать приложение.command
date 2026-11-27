@@ -37,5 +37,17 @@ cp "$sdk/LICENSE" "$resources/Sparkle-LICENSE"
 /usr/bin/python3 -c 'import json, plistlib, sys; data = json.load(open("English.json")); plistlib.dump({k:k for k in data}, open(sys.argv[1],"wb"), fmt=plistlib.FMT_BINARY)' "$resources/ru.lproj/Localizable.strings"
 cp English.json model_gui_worker.py 'Скачать модели.command' 'Реестр моделей.md' "$bundle/Contents/Resources/"
 mv "$work/ModelDownloader" "$bundle/Contents/MacOS/ModelDownloader"
-codesign --force --sign - "$bundle"
-codesign --verify --strict --all-architectures "$bundle"
+if [[ -n ${BENTODISK_SIGN_IDENTITY:-} ]]; then
+    sign=(codesign --force --sign "$BENTODISK_SIGN_IDENTITY" --keychain "${BENTODISK_SIGN_KEYCHAIN:?}" --timestamp --options runtime)
+    framework="$bundle/Contents/Frameworks/Sparkle.framework"
+    helpers="$framework/Versions/B"
+    "${sign[@]}" "$helpers/XPCServices/Installer.xpc"
+    "${sign[@]}" --preserve-metadata=entitlements "$helpers/XPCServices/Downloader.xpc"
+    "${sign[@]}" "$helpers/Autoupdate"
+    "${sign[@]}" "$helpers/Updater.app"
+    "${sign[@]}" "$framework"
+    "${sign[@]}" "$bundle"
+else
+    codesign --force --sign - "$bundle"
+fi
+codesign --verify --deep --strict --all-architectures "$bundle"
