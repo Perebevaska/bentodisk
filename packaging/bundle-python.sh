@@ -22,7 +22,7 @@ fetch_runtime() {
 
 fetch_runtime aarch64 296f0903cccda15a5c9d3d8393cd2204718aeffd9b095a00f812d75c7b1c0967
 fetch_runtime x86_64 bb16e167ec9e38368118ce3e43ba2c7852fea2cdba16e1852555a8997747f78a
-mkdir -p "$destination/bin" "$destination/lib/python3.13" "$destination/licenses"
+mkdir -p "$destination/bin" "$destination/lib/python3.13/lib-dynload" "$destination/licenses"
 xcrun lipo -create "$work/aarch64/python/bin/python3.13" "$work/x86_64/python/bin/python3.13" -output "$destination/bin/python3"
 # BentoDisk uses the built-in native modules and pure Python standard library.
 rsync -a --exclude='lib-dynload/' --exclude='site-packages/' \
