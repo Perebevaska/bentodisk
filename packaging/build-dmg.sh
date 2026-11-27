@@ -24,7 +24,10 @@ mounted=true
 app="$work/installed/BentoDisk.app"
 ditto "$mount/BentoDisk.app" "$app"
 codesign --verify --strict --all-architectures "$app"
-xcrun lipo "$app/Contents/MacOS/ModelDownloader" -verify_arch arm64 x86_64
+architectures=$(xcrun lipo -archs "$app/Contents/MacOS/ModelDownloader")
+for arch in arm64 x86_64; do
+    [[ " $architectures " == *" $arch "* ]] || { echo "Missing architecture: $arch" >&2; exit 1; }
+done
 /usr/bin/python3 -B "$app/Contents/Resources/model_gui_worker.py" --catalog |
     /usr/bin/python3 -c 'import json, sys; rows = json.load(sys.stdin); assert isinstance(rows, list) and rows'
 hdiutil detach "$mount"
