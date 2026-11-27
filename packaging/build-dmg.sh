@@ -23,6 +23,9 @@ mounted=true
 [[ "$(readlink "$mount/Applications")" == /Applications ]]
 app="$work/installed/BentoDisk.app"
 ditto "$mount/BentoDisk.app" "$app"
+icon=$(plutil -extract CFBundleIconFile raw "$app/Contents/Info.plist")
+iconutil -c iconset "$app/Contents/Resources/$icon" -o "$work/verified.iconset"
+[[ -s "$work/verified.iconset/icon_16x16.png" && -s "$work/verified.iconset/icon_512x512@2x.png" ]]
 codesign --verify --strict --all-architectures "$app"
 architectures=$(xcrun lipo -archs "$app/Contents/MacOS/ModelDownloader")
 for arch in arm64 x86_64; do

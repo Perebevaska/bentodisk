@@ -17,6 +17,14 @@ xcrun lipo -create "$work/ModelDownloader-arm64" "$work/ModelDownloader-x86_64" 
 resources="$bundle/Contents/Resources"
 mkdir -p "$bundle/Contents/MacOS" "$resources/en.lproj" "$resources/ru.lproj"
 cp packaging/Info.plist "$bundle/Contents/Info.plist"
+iconset="$work/BentoDisk.iconset"
+mkdir "$iconset"
+for points in 16 32 128 256 512; do
+    sips -z "$points" "$points" packaging/BentoDisk.png --out "$iconset/icon_${points}x${points}.png" >/dev/null
+    pixels=$((points * 2))
+    sips -z "$pixels" "$pixels" packaging/BentoDisk.png --out "$iconset/icon_${points}x${points}@2x.png" >/dev/null
+done
+iconutil -c icns "$iconset" -o "$resources/BentoDisk.icns"
 if [[ -n ${BENTODISK_VERSION:-} ]]; then
     for key in CFBundleVersion CFBundleShortVersionString; do
         plutil -replace "$key" -string "$BENTODISK_VERSION" "$bundle/Contents/Info.plist"

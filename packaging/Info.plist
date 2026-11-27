@@ -3,6 +3,7 @@
 <key>CFBundleExecutable</key><string>ModelDownloader</string>
 <key>CFBundleIdentifier</key><string>local.mac.modeldownloader</string>
 <key>CFBundleName</key><string>BentoDisk</string>
+<key>CFBundleIconFile</key><string>BentoDisk.icns</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleVersion</key><string>1.1.0</string>
 <key>CFBundleShortVersionString</key><string>1.1.0</string>
