@@ -2501,6 +2501,13 @@ private struct FavoriteLocationSheet: View {
 
 struct PreferencesView: View {
     @ObservedObject var app: Downloads
+    let updater: SPUUpdater
+    @State private var automaticChecks: Bool
+    init(app: Downloads, updater: SPUUpdater) {
+        self.app = app
+        self.updater = updater
+        _automaticChecks = State(initialValue: updater.automaticallyChecksForUpdates)
+    }
     private func driveRow(_ drive:StorageVolume) -> some View {
         let destination = app.libraryDestination(for:drive)
         let folder = app.modelsFolder(at:destination)
@@ -2540,6 +2547,10 @@ struct PreferencesView: View {
                     Text(verbatim: "Русский").tag(AppLanguage.ru)
                     Text(verbatim: "English").tag(AppLanguage.en)
                 }
+            }
+            Section("Обновления") {
+                Toggle("Проверять обновления автоматически", isOn:$automaticChecks)
+                    .onChange(of:automaticChecks) { _, enabled in updater.automaticallyChecksForUpdates = enabled }
             }
             Section("Подключённые диски") {
                 ForEach(app.volumes) { drive in driveRow(drive) }
@@ -2625,7 +2636,7 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate,SPUUpdaterD
         if settingsWindow == nil {
             let panel = NSWindow(contentRect: NSRect(x:0, y:0, width:560, height:600),
                                  styleMask: [.titled,.closable,.resizable], backing:.buffered, defer:false)
-            let view = NSHostingView(rootView:PreferencesView(app:app))
+            let view = NSHostingView(rootView:PreferencesView(app:app, updater:updates.updater))
             view.sizingOptions = []
             panel.contentView = view
             panel.contentMinSize = NSSize(width:420, height:310)
