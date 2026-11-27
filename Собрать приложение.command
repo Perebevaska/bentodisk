@@ -1,7 +1,7 @@
 #!/bin/zsh
 set -eu
 cd "${0:A:h}"
-bundle=${1:-'Загрузчик моделей.app'}
+bundle=${1:-BentoDisk.app}
 work=$(mktemp -d "${TMPDIR:-/tmp}/model-build.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 sdk=${SPARKLE_SDK:-"$work/sparkle"}

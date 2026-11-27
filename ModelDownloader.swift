@@ -2660,7 +2660,7 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate,SPUUpdaterD
         let settings = appMenu.addItem(withTitle:language.text("Настройки…"), action:#selector(openSettings), keyEquivalent:",")
         settings.target = self
         appMenu.addItem(.separator())
-        appMenu.addItem(withTitle:language.text("Завершить загрузчик"),action:#selector(NSApplication.terminate(_:)),keyEquivalent:"q")
+        appMenu.addItem(withTitle:language.text("Завершить BentoDisk"),action:#selector(NSApplication.terminate(_:)),keyEquivalent:"q")
         let edit = NSMenu(title:language.text("Правка"))
         main.addItem(withTitle:language.text("Правка"),action:nil,keyEquivalent:"").submenu = edit
         for (name, selector, key) in [("Вырезать","cut:","x"),("Скопировать","copy:","c"),
@@ -2680,7 +2680,7 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate,SPUUpdaterD
         let view = NSHostingView(rootView:Content(app:app))
         view.sizingOptions = []
         window = NSWindow(contentRect:NSRect(x:0,y:0,width:980,height:820),styleMask:[.titled,.closable,.resizable,.miniaturizable],backing:.buffered,defer:false)
-        window.title = "Загрузчик моделей"; window.contentView = view; window.delegate=self
+        window.title = "BentoDisk"; window.contentView = view; window.delegate=self
         window.contentMinSize = NSSize(width:760,height:590)
         if let frame = NSScreen.main?.visibleFrame {
             window.setContentSize(NSSize(width:min(980,frame.width),height:min(820,frame.height - 40)))
@@ -2688,7 +2688,6 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate,SPUUpdaterD
         app.$theme.sink { NSApp.appearance = $0.appearance }.store(in:&observers)
         app.$language.sink { [weak self] language in
             self?.configureMenu(language)
-            self?.window.title = language.text("Загрузчик моделей")
             self?.settingsWindow?.title = language.text("Настройки")
         }.store(in:&observers)
         window.center(); window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps:true)

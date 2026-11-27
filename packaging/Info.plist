@@ -3,10 +3,11 @@
 <key>CFBundleExecutable</key><string>ModelDownloader</string>
 <key>CFBundleIdentifier</key><string>local.mac.modeldownloader</string>
 <key>CFBundleName</key><string>BentoDisk</string>
+<key>CFBundleDisplayName</key><string>BentoDisk</string>
 <key>CFBundleIconFile</key><string>BentoDisk.icns</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>1.2.0</string>
-<key>CFBundleShortVersionString</key><string>1.2.0</string>
+<key>CFBundleVersion</key><string>1.2.1</string>
+<key>CFBundleShortVersionString</key><string>1.2.1</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>SUFeedURL</key><string>http://localhost:49327/appcast.xml</string>
 <key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
