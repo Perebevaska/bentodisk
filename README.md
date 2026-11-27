@@ -2,29 +2,39 @@
 
 **English** · [Русский](README.ru.md)
 
-**Find the model you already downloaded.**
+**Download LLMs and other local AI models on macOS.**
 
-BentoDisk is a macOS app for browsing, downloading, and organizing local AI models. Search for a model, compare variants, and see which ones are already on your Mac or an external drive before downloading again.
+BentoDisk searches Hugging Face, ModelScope, LM Studio, and Ollama Library from one window. Compare model variants, see which files are already on your Mac or external drives, and download the rest to the drive you choose.
 
-## Download
-
-Get the DMG from [GitHub Releases](https://github.com/Perebevaska/bentodisk/releases). Open it and drag **BentoDisk** into **Applications**.
-
-BentoDisk supports **macOS 14 or later** on **Apple Silicon and Intel**. The app includes Python. Preview builds use an ad hoc signature. If macOS asks you to confirm the first launch, follow [Apple’s instructions](https://support.apple.com/en-us/102445).
-
-## What you can do
-
-- **Find GGUF and MLX variants.** Check their size, download state, storage location, and whether a vision projector is available before starting a transfer.
-- **See what is on each drive.** Browse downloaded models and planned destinations on connected volumes. BentoDisk can read model locations configured in LM Studio and Strata.
-- **Keep browsing while downloads run.** Select multiple models, add them to the end of the queue, and pause or resume individual transfers.
-
-## Screenshots
+[**Download for macOS**](https://github.com/Perebevaska/bentodisk/releases) · macOS 14+ · Apple Silicon and Intel
 
 ![Model browser showing Qwen variants, their sizes, and which ones are downloaded or queued on each drive.](docs/screenshots/browser-en.png)
+
+## From search to disk
+
+1. **Find a model.** Search across catalogs, pick one source, or paste a model URL. Browse popular and trending models where the source provides rankings.
+2. **Choose the files.** Compare formats, quantizations, and sizes. Check which variants are already downloaded, whether a vision projector is available, and how much free space is on the destination drive.
+3. **Choose where to store it.** Download directly to an internal or external drive, or save the model to Favorites with a planned destination. BentoDisk groups model folders by purpose.
+4. **Manage the queue.** Add several models while a transfer is running. Pause and resume transfers, and reuse matching files after BentoDisk verifies them.
 
 ![Downloads showing one paused model with a Resume button and two models waiting in the queue.](docs/screenshots/queue-en.png)
 
 The screenshots and demo use sample storage and queue data.
+
+## Model catalogs and formats
+
+| Catalog | What BentoDisk downloads |
+| --- | --- |
+| Hugging Face | Files from the selected repository revision, including GGUF variants and MLX or Safetensors bundles |
+| ModelScope | Files from the selected model repository |
+| LM Studio | Model files from the Hugging Face repositories linked by the LM Studio catalog |
+| Ollama Library | Files for tags that provide local model weights |
+
+BentoDisk can also find models in the library folders configured in LM Studio and Strata. Alongside LLMs for chat and coding, the browser covers models for embeddings, vision, image generation, audio, and video. Use a compatible runtime to run the downloaded models.
+
+## Install
+
+Open the DMG and drag **BentoDisk** into **Applications**. Python is included. Preview builds use an ad hoc signature. If macOS asks you to confirm the first launch, follow [Apple’s instructions](https://support.apple.com/en-us/102445).
 
 <details>
 <summary>Watch the 20-second demo</summary>
