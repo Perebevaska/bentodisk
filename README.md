@@ -37,3 +37,7 @@ To run the offline tests:
 ## Feedback
 
 Tell us which catalog, model variant, or storage layout BentoDisk missed. Include your macOS version and the model repository, and remove personal paths from screenshots. [Open an issue](https://github.com/Perebevaska/bentodisk/issues/new).
+
+## License
+
+BentoDisk is licensed under the [MIT License](LICENSE). Bundled third-party components retain their own licenses.

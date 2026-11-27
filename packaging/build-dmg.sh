@@ -23,6 +23,7 @@ mounted=true
 [[ "$(readlink "$mount/Applications")" == /Applications ]]
 app="$work/installed/BentoDisk.app"
 ditto "$mount/BentoDisk.app" "$app"
+cmp LICENSE "$app/Contents/Resources/BentoDisk-LICENSE"
 icon=$(plutil -extract CFBundleIconFile raw "$app/Contents/Info.plist")
 iconutil -c iconset "$app/Contents/Resources/$icon" -o "$work/verified.iconset"
 [[ -s "$work/verified.iconset/icon_16x16.png" && -s "$work/verified.iconset/icon_512x512@2x.png" ]]

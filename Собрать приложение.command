@@ -33,6 +33,7 @@ fi
 mkdir -p "$bundle/Contents/Frameworks"
 ditto "$sdk/Sparkle.framework" "$bundle/Contents/Frameworks/Sparkle.framework"
 cp "$sdk/LICENSE" "$resources/Sparkle-LICENSE"
+cp LICENSE "$resources/BentoDisk-LICENSE"
 /usr/bin/plutil -convert binary1 -o "$resources/en.lproj/Localizable.strings" English.json
 /usr/bin/python3 -c 'import json, plistlib, sys; data = json.load(open("English.json")); plistlib.dump({k:k for k in data}, open(sys.argv[1],"wb"), fmt=plistlib.FMT_BINARY)' "$resources/ru.lproj/Localizable.strings"
 cp English.json model_gui_worker.py 'Скачать модели.command' 'Реестр моделей.md' "$bundle/Contents/Resources/"
