@@ -2502,12 +2502,6 @@ private struct FavoriteLocationSheet: View {
 struct PreferencesView: View {
     @ObservedObject var app: Downloads
     let updater: SPUUpdater
-    @State private var automaticChecks: Bool
-    init(app: Downloads, updater: SPUUpdater) {
-        self.app = app
-        self.updater = updater
-        _automaticChecks = State(initialValue: updater.automaticallyChecksForUpdates)
-    }
     private func driveRow(_ drive:StorageVolume) -> some View {
         let destination = app.libraryDestination(for:drive)
         let folder = app.modelsFolder(at:destination)
@@ -2549,8 +2543,12 @@ struct PreferencesView: View {
                 }
             }
             Section("Обновления") {
-                Toggle("Проверять обновления автоматически", isOn:$automaticChecks)
-                    .onChange(of:automaticChecks) { _, enabled in updater.automaticallyChecksForUpdates = enabled }
+                Toggle("Проверять обновления автоматически", isOn:Binding(
+                    get: { updater.automaticallyChecksForUpdates },
+                    set: { enabled in
+                        app.objectWillChange.send()
+                        updater.automaticallyChecksForUpdates = enabled
+                    }))
             }
             Section("Подключённые диски") {
                 ForEach(app.volumes) { drive in driveRow(drive) }
