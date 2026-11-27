@@ -158,6 +158,7 @@ struct ImportPlan: Decodable {
     let options:[ImportOption]
     let extras:[ExtraFile]
 }
+let python = Bundle.main.resourceURL!.appendingPathComponent("Python/bin/python3")
 let worker = Bundle.main.resourceURL!.appendingPathComponent("model_gui_worker.py")
 private func decodeImportReply<T:Decodable>(_ process:Process, output:Pipe, input:Pipe, body:Data, as type:T.Type) throws -> T {
     try input.fileHandleForWriting.write(contentsOf: body)
@@ -485,8 +486,8 @@ class Downloads: ObservableObject {
         locationScan = ticket; indexingLocations = true
         DispatchQueue.global(qos:.utility).async {
             let process = Process(), pipe = Pipe()
-            process.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-            process.arguments = [worker.path,"--variant-index"] + requested.sorted()
+            process.executableURL = python
+            process.arguments = ["-IB", worker.path,"--variant-index"] + requested.sorted()
             process.standardOutput = pipe
             var index: VariantIndex?
             if (try? process.run()) != nil {
@@ -695,8 +696,8 @@ class Downloads: ObservableObject {
     private func streamCatalogSearch(_ request:[String:String],update:@escaping (SearchPage)->Void) {
         cancelLookup()
         let process = Process(), input = Pipe(), output = Pipe()
-        process.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-        process.arguments = [worker.path,"--search-stream"]
+        process.executableURL = python
+        process.arguments = ["-IB", worker.path,"--search-stream"]
         process.environment = ProcessInfo.processInfo.environment.merging(["MODEL_DOWNLOADER_LANGUAGE":language.rawValue]) { _,new in new }
         process.standardInput = input; process.standardOutput = output
         do {
@@ -819,9 +820,9 @@ class Downloads: ObservableObject {
         if changing && writing { return }
         if !changing { cancelLookup() }
         let p = Process(), output = Pipe(), input = Pipe()
-        p.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
+        p.executableURL = python
         p.environment = ProcessInfo.processInfo.environment.merging(["MODEL_DOWNLOADER_LANGUAGE":language.rawValue]) { _, new in new }
-        p.arguments = [worker.path,"--import"]
+        p.arguments = ["-IB", worker.path,"--import"]
         p.standardInput = input; p.standardOutput = output
         importMessage = ""
         do {
@@ -890,8 +891,8 @@ class Downloads: ObservableObject {
         let lang = language.rawValue
         return try await Task.detached {
             let process = Process(), output = Pipe(), input = Pipe()
-            process.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-            process.arguments = [worker.path,"--import"]
+            process.executableURL = python
+            process.arguments = ["-IB", worker.path,"--import"]
             process.environment = ProcessInfo.processInfo.environment.merging(["MODEL_DOWNLOADER_LANGUAGE":lang]) { _,new in new }
             process.standardOutput = output; process.standardInput = input
             try process.run()
@@ -1064,8 +1065,8 @@ class Downloads: ObservableObject {
             observers.append(center.addObserver(forName:notification, object:nil, queue:.main) { [weak self] _ in self?.refreshVolumes() })
         }
         let p = Process(), output = Pipe()
-        p.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-        p.arguments = [worker.path,"--catalog"]; p.standardOutput = output
+        p.executableURL = python
+        p.arguments = ["-IB", worker.path,"--catalog"]; p.standardOutput = output
         do {
             try p.run()
             models = try JSONDecoder().decode([Model].self, from: output.fileHandleForReading.readDataToEndOfFile())
@@ -1136,8 +1137,8 @@ class Downloads: ObservableObject {
         DispatchQueue.global(qos:.utility).async {
             let result = Result<DriveLibrary,Error> {
                 let p = Process(), output = Pipe()
-                p.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-                p.arguments = [worker.path] + arguments
+                p.executableURL = python
+                p.arguments = ["-IB", worker.path] + arguments
                 p.standardOutput = output
                 try p.run()
                 let data = output.fileHandleForReading.readDataToEndOfFile()
@@ -1170,8 +1171,8 @@ class Downloads: ObservableObject {
         guard !saved.isEmpty else { return }
         DispatchQueue.global(qos:.utility).async {
             let p = Process(), output = Pipe()
-            p.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
-            p.arguments = [worker.path, "--queue-progress", destination.path]
+            p.executableURL = python
+            p.arguments = ["-IB", worker.path, "--queue-progress", destination.path]
             p.standardOutput = output
             guard (try? p.run()) != nil else { return }
             let data = output.fileHandleForReading.readDataToEndOfFile()
@@ -1317,9 +1318,9 @@ class Downloads: ObservableObject {
             if alert.runModal() != .alertFirstButtonReturn { return }
         }
         let p = Process(), out = Pipe(), cmd = Pipe()
-        p.executableURL = URL(fileURLWithPath:"/usr/bin/python3")
+        p.executableURL = python
         p.environment = ProcessInfo.processInfo.environment.merging(["MODEL_DOWNLOADER_LANGUAGE":language.rawValue]) { _, new in new }
-        p.arguments = ["-u",worker.path]; p.standardInput = cmd; p.standardOutput = out; p.standardError = out
+        p.arguments = ["-IBu", worker.path]; p.standardInput = cmd; p.standardOutput = out; p.standardError = out
         do {
             var request: [String:Any] = ["disk":disk.path,"ids":ids,"previous":saved,"resume":saved == ids]
             if let resumeFirst { request["resumeFirst"] = resumeFirst }
