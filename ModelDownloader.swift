@@ -1,6 +1,7 @@
 import SwiftUI
 import AppKit
 import Combine
+import Sparkle
 
 let purposeOptions = ["Текст и диалог", "Код", "Анализ изображений", "Распознавание текста (OCR)", "Эмбеддинги", "Реранжирование", "Генерация изображений", "Редактирование изображений", "Управление генерацией", "Распознавание речи", "Синтез речи", "Генерация видео"]
 let providers = ["Все каталоги", "Hugging Face", "ModelScope", "LM Studio", "Ollama Library"]
@@ -1047,7 +1048,8 @@ class Downloads: ObservableObject {
         keys.swapAt(i, i+offset)
         changeQueue(keys)
     }
-    var process: Process?, input: FileHandle?
+    @Published var process: Process?
+    var input: FileHandle?
     var sessionIDs = [String](), sessionTotal = 0.0, completedOffset = 0.0
     var canEdit: Bool { process == nil }
     init() {
@@ -2563,11 +2565,60 @@ struct PreferencesView: View {
     }
 }
 
-final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate {
+final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate,SPUUpdaterDelegate,NSMenuItemValidation {
     var window:NSWindow!
     let app = Downloads()
     private var settingsWindow: NSWindow?
     private var observers = Set<AnyCancellable>()
+    private lazy var updates = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+    private var pendingInstall: (() -> Void)?
+    private var installWhenFinished = false
+    private var updatePromptOpen = false
+    private var libraryBusy: Bool { !app.canEdit || app.writing || app.organizing }
+
+    func updater(_ updater: SPUUpdater, shouldPostponeRelaunchForUpdate item: SUAppcastItem,
+                 untilInvokingBlock installHandler: @escaping () -> Void) -> Bool {
+        guard libraryBusy else { return false }
+        pendingInstall = installHandler
+        presentUpdateChoice()
+        return true
+    }
+
+    private func presentUpdateChoice() {
+        guard !updatePromptOpen else { return }
+        let alert = NSAlert()
+        alert.messageText = app.language.text("Обновление BentoDisk готово")
+        alert.informativeText = app.language.text("Приложение перезапустится, когда завершатся загрузки и операции с библиотекой.")
+        alert.addButton(withTitle:app.language.text("Обновить после завершения очереди"))
+        alert.addButton(withTitle:app.language.text("Позже")).keyEquivalent = "\u{1b}"
+        updatePromptOpen = true
+        alert.beginSheetModal(for:window) { response in
+            self.updatePromptOpen = false
+            self.installWhenFinished = response == .alertFirstButtonReturn
+            self.finishDeferredUpdate()
+        }
+    }
+
+    private func finishDeferredUpdate() {
+        guard installWhenFinished, !libraryBusy, app.saved.isEmpty else { return }
+        installPendingUpdate()
+    }
+    private func installPendingUpdate() {
+        let install = pendingInstall
+        pendingInstall = nil
+        installWhenFinished = false
+        install?()
+    }
+    @objc func checkForUpdates(_ sender: Any?) {
+        if pendingInstall == nil { updates.checkForUpdates(sender) }
+        else if libraryBusy { presentUpdateChoice() }
+        else { installPendingUpdate() }
+    }
+    func validateMenuItem(_ item: NSMenuItem) -> Bool {
+        guard item.action == #selector(checkForUpdates(_:)) else { return true }
+        item.title = app.language.text(pendingInstall == nil ? "Проверить обновления…" : "Установить обновление…")
+        return !updatePromptOpen && (pendingInstall != nil || updates.updater.canCheckForUpdates)
+    }
 
     @objc func openSettings() {
         app.refreshVolumes()
@@ -2595,6 +2646,7 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate {
         let appMenu = NSMenu()
         let first = main.addItem(withTitle:"",action:nil,keyEquivalent:"")
         first.submenu = appMenu
+        appMenu.addItem(withTitle:language.text("Проверить обновления…"), action:#selector(checkForUpdates(_:)), keyEquivalent:"").target = self
         let settings = appMenu.addItem(withTitle:language.text("Настройки…"), action:#selector(openSettings), keyEquivalent:",")
         settings.target = self
         appMenu.addItem(.separator())
@@ -2630,6 +2682,10 @@ final class Delegate:NSObject,NSApplicationDelegate,NSWindowDelegate {
             self?.settingsWindow?.title = language.text("Настройки")
         }.store(in:&observers)
         window.center(); window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps:true)
+        _ = updates
+        Publishers.CombineLatest4(app.$process, app.$writing, app.$organizing, app.$saved)
+            .receive(on:DispatchQueue.main)
+            .sink { [weak self] _ in self?.finishDeferredUpdate() }.store(in:&observers)
     }
     func applicationWillTerminate(_ notification:Notification){ app.cancelLookup(); app.pause() }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender:NSApplication)->Bool { true }

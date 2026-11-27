@@ -2,9 +2,18 @@
 <plist version="1.0"><dict>
 <key>CFBundleExecutable</key><string>ModelDownloader</string>
 <key>CFBundleIdentifier</key><string>local.mac.modeldownloader</string>
-<key>CFBundleName</key><string>Загрузчик моделей</string>
+<key>CFBundleName</key><string>BentoDisk</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>1</string>
+<key>CFBundleVersion</key><string>1.1.0</string>
+<key>CFBundleShortVersionString</key><string>1.1.0</string>
+<key>LSMinimumSystemVersion</key><string>14.0</string>
+<key>SUFeedURL</key><string>http://localhost:49327/appcast.xml</string>
+<key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
+<key>SUPublicEDKey</key><string>kcQykHg/LN8EJtCTdw0Xt/HRE7vMMyccrFBHAD/6t1Y=</string>
+<key>SURequireSignedFeed</key><true/>
+<key>SUVerifyUpdateBeforeExtraction</key><true/>
+<key>SUAllowsAutomaticUpdates</key><false/>
+<key>SUEnableAutomaticChecks</key><false/>
 <key>CFBundleDevelopmentRegion</key><string>ru</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>

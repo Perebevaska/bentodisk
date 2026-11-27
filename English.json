@@ -1,4 +1,10 @@
 {
+  "Проверить обновления…": "Check for Updates…",
+  "Установить обновление…": "Install Update…",
+  "Обновить после завершения очереди": "Update After Downloads Finish",
+  "Обновление BentoDisk готово": "BentoDisk Update Is Ready",
+  "Приложение перезапустится, когда завершатся загрузки и операции с библиотекой.": "BentoDisk will restart once downloads and library changes finish.",
+  "Позже": "Later",
   "Диск не назначен": "No drive assigned",
   "Подключите диск для модели: %@": "Connect the drive for this model: %@",
   "Вид": "View",

@@ -20,6 +20,10 @@ jobs:
           persist-credentials: false
       - name: Run offline tests
         run: /usr/bin/python3 -B -m unittest discover -s tests
+      - name: Fetch and verify pinned Sparkle SDK
+        run: |
+          bash packaging/fetch-sparkle.sh "$RUNNER_TEMP/sparkle"
+          echo "SPARKLE_SDK=$RUNNER_TEMP/sparkle" >> "$GITHUB_ENV"
       - name: Build, mount and verify universal DMG
         run: bash packaging/build-dmg.sh
       - name: Upload verified disk image
@@ -27,5 +31,18 @@ jobs:
         with:
           name: BentoDisk-macOS
           path: dist/BentoDisk-macOS.dmg
+          if-no-files-found: error
+          compression-level: 0
+      - name: Sign private update and feed
+        if: github.ref_type == 'tag'
+        env:
+          BENTODISK_SPARKLE_PRIVATE_KEY: ${{ secrets.BENTODISK_SPARKLE_PRIVATE_KEY }}
+        run: bash packaging/sign-update.sh
+      - name: Upload private test channel
+        if: github.ref_type == 'tag'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: BentoDisk-private-updates
+          path: dist/channel/
           if-no-files-found: error
           compression-level: 0
